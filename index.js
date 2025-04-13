@@ -1,7 +1,7 @@
-import axios from "axios";
-import express from "express";
-import { allowedExtensions, LineTransform } from "./utils/line-transform";
-import { cacheRoutes } from "./utils/cache-routes";
+const axios = require("axios");
+const express = require("express");
+const { allowedExtensions, LineTransform } = require("./utils/line-transform");
+const { cacheRoutes } = require("./utils/cache-routes");
 
 const app = express();
 const PORT = 8000;
@@ -14,7 +14,7 @@ app.get("/", (_, res) => {
 
 app.get("/m3u8-proxy", async (req, res) => {
   try {
-    const url = req.query.url as string;
+    const url = req.query.url;
     if (!url) return res.status(400).json("url is required");
 
     const isStaticFiles = allowedExtensions.some((ext) => url.endsWith(ext));
@@ -37,7 +37,7 @@ app.get("/m3u8-proxy", async (req, res) => {
 
     const transform = new LineTransform(baseUrl);
     response.data.pipe(transform).pipe(res);
-  } catch (error: any) {
+  } catch (error) {
     console.log(error.message);
     res.status(500).send("Internal Server Error");
   }
